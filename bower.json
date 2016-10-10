@@ -1,0 +1,20 @@
+{
+  "name": "d3trial",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "Thanh Cao <ctt.bk.hcmut2009@gmail.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^4.2.6"
+  }
+}
