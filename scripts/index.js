@@ -4,12 +4,20 @@
     var padding = 50;
     var defaultCircleRadius = 2;    
 
-    var viz = d3.select("#viz-wrapper")
+    var zoom = d3.zoom().scaleExtent([1,10]).on("zoom",zoomed)
+
+    var circleDrag = d3.drag()
+                        .on("start", dragStarted)
+                        .on("drag", dragged);
+
+    var svg = d3.select("#viz-wrapper")
                     .append('svg')
-                    .attr('height', height + padding * 2)
-                    .attr('width', width + padding *2)
-                    .append('g')
-                    .attr('id', 'viz')                    
+                    .attr('height', height + padding * 2 )
+                    .attr('width', width + padding * 2)
+                    .call(zoom);
+
+    var viz = svg.append('g')
+                    .attr('id', 'viz')
                     .attr('transform','translate(' + padding + ',' + padding + ')');
 
     var xScale = d3.scaleTime().range([0,width]);
@@ -92,7 +100,7 @@
             .style('fill','#006bff');
 
         dots.append('circle')
-          .attr('r', 5);
+          .attr('r', defaultCircleRadius);
 
         dots.append('text')
           .text(function(d) {
@@ -115,4 +123,36 @@
         dot.select('circle')
            .attr('r', defaultCircleRadius)           
         });
+
+        dots.call(circleDrag);
+
      });
+
+    function zoomed() {
+      viz.attr("transform", "translate(" + 
+                     d3.event.transform.x + "," + d3.event.transform.y + ")" +
+                    "scale(" + d3.event.transform.k + ")");
+    };
+
+    function dragStarted() {
+      d3.event.sourceEvent.stopPropagation();
+      d3.select(this)
+         .select('circle')
+         .style("fill", 'red');
+    };
+
+    function dragged(d) {
+      d.x = d3.event.x;
+      d.y = d3.event.y;
+      d3.select(this)
+         .attr("transform", 
+          'translate(' + d.x + ',' +
+                         d.y + ')');
+      date = xScale.invert(d3.event.x);
+      d.DATE = parseTime(date);
+      temp = yScale.invert(d3.event.y);
+      d.TMAX = temp.toString();
+      console.log(d);
+    };
+
+
